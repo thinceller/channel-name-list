@@ -3,3 +3,4 @@ node_modules/
 
 # Firebase cache
 .firebase/
+firebase-debug.log
