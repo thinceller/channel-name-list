@@ -48,6 +48,7 @@ const LoginForm: React.FC<ILoginForm> = ({ loginUser }) => {
 };
 
 const mapStateToProps = (state: any) => {
+  console.debug(state);
   return {};
 };
 
