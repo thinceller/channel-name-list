@@ -1,51 +1,65 @@
-import { useState } from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // import Router from 'next/router';
 
 import { loginUser } from '../store/auth/actions';
 
-interface ILoginForm {
+interface ILoginFormProps {
   loginUser: any;
 }
 
-const LoginForm: React.FC<ILoginForm> = ({ loginUser }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+interface ILoginFormState {
+  email: string;
+  password: string;
+}
 
-  const handleEmailChange = (e: React.ChangeEvent <HTMLInputElement>) => {
-    setEmail(e.target.value);
+class LoginForm extends React.Component<ILoginFormProps, ILoginFormState> {
+  state = {
+    email: '',
+    password: '',
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent <HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
+  handleEmailChange = (e: React.ChangeEvent <HTMLInputElement>) => {
+    this.setState({ email: e.target.value });
+  }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  handlePasswordChange = (e: React.ChangeEvent <HTMLInputElement>) => {
+    this.setState({ password: e.target.value });
+  }
+
+  handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    loginUser(email, password);
-  };
+    console.log('submit button');
+    this.props.loginUser(this.state.email, this.state.password);
+  }
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <label>メールアドレス</label>
-      <input
-        name="email"
-        type="email"
-        value={email}
-        onChange={handleEmailChange}
-      />
-      <label>パスワード</label>
-      <input
-        name="password"
-        type="password"
-        value={password}
-        onChange={handlePasswordChange}
-      />
-      <input type="submit" value="ログイン" />
-    </form>
-  );
-};
+  render() {
+    const { email, password } = this.state;
+
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>メールアドレス</label>
+        <input
+          name="email"
+          type="email"
+          value={email}
+          onChange={this.handleEmailChange}
+          required={true}
+        />
+        <label>パスワード</label>
+        <input
+          name="password"
+          type="password"
+          value={password}
+          onChange={this.handlePasswordChange}
+          required={true}
+        />
+        <input type="submit" value="ログイン" />
+      </form>
+    );
+  }
+}
 
 const mapStateToProps = (state: any) => {
   console.debug(state);

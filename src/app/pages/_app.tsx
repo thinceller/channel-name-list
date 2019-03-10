@@ -12,7 +12,7 @@ const reducers = combineReducers({
   auth: authReducer,
 });
 
-const initStore = (initialState, _) => {
+const initStore = (initialState = {}, _) => {
   return createStore(
     reducers,
     initialState,
