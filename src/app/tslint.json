@@ -1,7 +1,9 @@
 {
   "extends": ["tslint-config-airbnb", "tslint-react"],
   "rules": {
+    "jsx-no-multiline-js": false,
     "import-name": false,
+    "ter-arrow-parens": false,
     "variable-name": [true, "allow-pascal-case"]
   }
 }
