@@ -47,11 +47,15 @@ const LoginForm: React.FC<ILoginForm> = ({ loginUser }) => {
   );
 };
 
+const mapStateToProps = (state: any) => {
+  return {};
+};
+
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators({ loginUser }, dispatch);
 };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(LoginForm);
