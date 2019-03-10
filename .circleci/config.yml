@@ -9,4 +9,4 @@ jobs:
       - run: yarn
       - run:
           name: Deploy to firebase
-          command: ./node_modules/.bin/firebaase deploy --token "$FIREBASE_TOKEN"
+          command: ./node_modules/.bin/firebase deploy --token "$FIREBASE_TOKEN"
