@@ -1,2 +1,18 @@
+const path = require('path')
 const withTypescript = require('@zeit/next-typescript')
-module.exports = withTypescript({ distDir: '../../dist/functions/next' })
+const Dotenv = require('dotenv-webpack')
+
+const defaultConfig = {
+  distDir: '../../dist/functions/next',
+}
+module.exports = withTypescript({
+  ...defaultConfig,
+  webpack(config) {
+    config.plugins = config.plugins || []
+    config.plugins.push(new Dotenv({
+      path: path.join(__dirname, '.env'),
+      systemvars: true
+    }))
+    return config
+  }
+})
