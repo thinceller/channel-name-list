@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-// import Router from 'next/router';
+import Router from 'next/router';
 
 import { loginUser } from '../store/auth/actions';
 
@@ -31,7 +31,9 @@ class LoginForm extends React.Component<ILoginFormProps, ILoginFormState> {
   handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('submit button');
-    this.props.loginUser(this.state.email, this.state.password);
+    this.props.loginUser(this.state.email, this.state.password)
+      .then(() => Router.push('/'))
+      .catch(err => console.error(err));
   }
 
   render() {
@@ -67,7 +69,10 @@ const mapStateToProps = (state: any) => {
 };
 
 const mapDispatchToProps = (dispatch: any) => {
-  return bindActionCreators({ loginUser }, dispatch);
+  return bindActionCreators(
+    { loginUser },
+    dispatch,
+  );
 };
 
 export default connect(
