@@ -2,7 +2,7 @@ import React from 'react';
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import thunkMiddleware from 'redux-thunk';
+import ReduxThunk from 'redux-thunk';
 import App, { Container } from 'next/app';
 import withRedux from 'next-redux-wrapper';
 
@@ -16,7 +16,7 @@ const initStore = (initialState = {}, _) => {
   return createStore(
     reducers,
     initialState,
-    composeWithDevTools(applyMiddleware(thunkMiddleware)),
+    composeWithDevTools(applyMiddleware(ReduxThunk)),
   );
 };
 

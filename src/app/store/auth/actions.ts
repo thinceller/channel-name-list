@@ -1,4 +1,5 @@
 import { auth } from '../../firebase';
+import FluxAction from '../FluxAction';
 
 export const actionTypes = {
   createUser: 'CREATE_USER',
@@ -7,7 +8,7 @@ export const actionTypes = {
 };
 
 export const createUser = (email: string, password: string) => dispatch => {
-  return dispatch => {
+  return new Promise((resolve, reject) => {
     auth.createUserWithEmailAndPassword(email, password)
           .then(res => {
             console.log(res);
@@ -18,15 +19,15 @@ export const createUser = (email: string, password: string) => dispatch => {
               email: newUser.email,
               providerId: newUser.providerId,
             };
-            dispatch(actionTypes.createUser, { payload: user });
+            dispatch(FluxAction.createPlaneSuccess(actionTypes.createUser, { payload: user }));
+            resolve(res);
           })
-          .catch(err => console.error(err.message));
-  };
+          .catch(err => reject(err.message));
+  });
 };
 
 export const loginUser = (email: string, password: string) => dispatch => {
-  console.log(email, password);
-  return dispatch => {
+  return new Promise((resolve, reject) => {
     auth.signInWithEmailAndPassword(email, password)
           .then(res => {
             const currentUser = res.user;
@@ -39,16 +40,20 @@ export const loginUser = (email: string, password: string) => dispatch => {
               photoURL: currentUser.photoURL,
               providerId: currentUser.providerId,
             };
-            dispatch(actionTypes.loginUser, { payload: user });
-          });
-  };
+            dispatch(FluxAction.createPlaneSuccess(actionTypes.loginUser, { payload: user }));
+            resolve(res);
+          })
+          .catch(err => reject(err.message));
+  });
 };
 
-export function logoutUser() {
-  return dispatch => {
+export const logoutUser = () => dispatch => {
+  return new Promise((resolve, reject) => {
     auth.signOut()
           .then(() => {
-            dispatch(actionTypes.logoutUser, { payload: null });
-          });
-  };
-}
+            dispatch(FluxAction.createPlaneSuccess(actionTypes.logoutUser, { payload: null }));
+            resolve();
+          })
+          .catch(err => reject(err.message));
+  });
+};
