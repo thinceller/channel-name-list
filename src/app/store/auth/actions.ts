@@ -19,7 +19,7 @@ export const createUser = (email: string, password: string) => dispatch => {
               email: newUser.email,
               providerId: newUser.providerId,
             };
-            dispatch(FluxAction.createPlaneSuccess(actionTypes.createUser, { payload: user }));
+            dispatch(FluxAction.createPlaneSuccess(actionTypes.createUser, { user }));
             resolve(res);
           })
           .catch(err => reject(err.message));
@@ -40,7 +40,7 @@ export const loginUser = (email: string, password: string) => dispatch => {
               photoURL: currentUser.photoURL,
               providerId: currentUser.providerId,
             };
-            dispatch(FluxAction.createPlaneSuccess(actionTypes.loginUser, { payload: user }));
+            dispatch(FluxAction.createPlaneSuccess(actionTypes.loginUser, { user }));
             resolve(res);
           })
           .catch(err => reject(err.message));
@@ -51,7 +51,7 @@ export const logoutUser = () => dispatch => {
   return new Promise((resolve, reject) => {
     auth.signOut()
           .then(() => {
-            dispatch(FluxAction.createPlaneSuccess(actionTypes.logoutUser, { payload: null }));
+            dispatch(FluxAction.createPlaneSuccess(actionTypes.logoutUser, { user: null }));
             resolve();
           })
           .catch(err => reject(err.message));
