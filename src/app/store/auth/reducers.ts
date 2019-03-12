@@ -7,7 +7,7 @@ export function authReducer(state = initAuthState, action: any) {
     case actionTypes.createUser:
     case actionTypes.loginUser:
     case actionTypes.logoutUser:
-      return { ...state, user: action.payload };
+      return { ...state, user: action.payload.user };
     default:
       return state;
   }
