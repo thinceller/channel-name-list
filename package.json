@@ -21,6 +21,7 @@
     "install-deps": "cd \"dist/functions\" && npm i"
   },
   "dependencies": {
+    "@material-ui/core": "^3.9.2",
     "@zeit/next-typescript": "^1.1.0",
     "dotenv-webpack": "^1.7.0",
     "firebase": "^5.8.6",

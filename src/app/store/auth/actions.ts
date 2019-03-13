@@ -2,9 +2,20 @@ import { auth } from '../../firebase';
 import FluxAction from '../FluxAction';
 
 export const actionTypes = {
+  fetchUser: 'FETCH_USER',
   createUser: 'CREATE_USER',
   loginUser: 'LOGIN_USER',
   logoutUser: 'LOGOUT_USER',
+};
+
+export const fetchUser = () => dispatch => {
+  return new Promise((resolve) => {
+    const user = auth.currentUser;
+    if (user) {
+      dispatch(FluxAction.createPlaneSuccess(actionTypes.fetchUser, { user }));
+      resolve(user);
+    }
+  });
 };
 
 export const createUser = (email: string, password: string) => dispatch => {
