@@ -30,7 +30,6 @@ class LoginForm extends React.Component<ILoginFormProps, ILoginFormState> {
 
   handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('submit button');
     this.props.loginUser(this.state.email, this.state.password)
       .then(() => Router.push('/'))
       .catch(err => console.error(err));
