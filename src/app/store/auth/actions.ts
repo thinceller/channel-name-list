@@ -1,3 +1,5 @@
+import { Action, Dispatch } from 'redux';
+
 import { auth } from '../../firebase';
 import FluxAction from '../FluxAction';
 
@@ -8,17 +10,18 @@ export const actionTypes = {
   logoutUser: 'LOGOUT_USER',
 };
 
-export const fetchUser = () => dispatch => {
+export const fetchUser = () => (dispatch: Dispatch<Action>) => {
   return new Promise((resolve) => {
-    const user = auth.currentUser;
-    if (user) {
-      dispatch(FluxAction.createPlaneSuccess(actionTypes.fetchUser, { user }));
-      resolve(user);
-    }
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        dispatch(FluxAction.createPlaneSuccess(actionTypes.fetchUser, { user }));
+        resolve(user);
+      }
+    });
   });
 };
 
-export const createUser = (email: string, password: string) => dispatch => {
+export const createUser = (email: string, password: string) => (dispatch: Dispatch<Action>) => {
   return new Promise((resolve, reject) => {
     auth.createUserWithEmailAndPassword(email, password)
           .then(res => {
@@ -37,7 +40,7 @@ export const createUser = (email: string, password: string) => dispatch => {
   });
 };
 
-export const loginUser = (email: string, password: string) => dispatch => {
+export const loginUser = (email: string, password: string) => (dispatch: Dispatch<Action>) => {
   return new Promise((resolve, reject) => {
     auth.signInWithEmailAndPassword(email, password)
           .then(res => {
@@ -58,7 +61,7 @@ export const loginUser = (email: string, password: string) => dispatch => {
   });
 };
 
-export const logoutUser = () => dispatch => {
+export const logoutUser = () => (dispatch: Dispatch<Action>) => {
   return new Promise((resolve, reject) => {
     auth.signOut()
           .then(() => {
