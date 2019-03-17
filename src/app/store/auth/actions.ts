@@ -3,7 +3,7 @@ import { Action, Dispatch } from 'redux';
 import { auth } from '../../firebase';
 import FluxAction from '../FluxAction';
 
-export const actionTypes = {
+export const authActionTypes = {
   fetchUser: 'FETCH_USER',
   createUser: 'CREATE_USER',
   loginUser: 'LOGIN_USER',
@@ -14,7 +14,7 @@ export const fetchUser = () => (dispatch: Dispatch<Action>) => {
   return new Promise((resolve) => {
     auth.onAuthStateChanged(user => {
       if (user) {
-        dispatch(FluxAction.createPlaneSuccess(actionTypes.fetchUser, { user }));
+        dispatch(FluxAction.createPlaneSuccess(authActionTypes.fetchUser, { user }));
         resolve(user);
       }
     });
@@ -25,7 +25,6 @@ export const createUser = (email: string, password: string) => (dispatch: Dispat
   return new Promise((resolve, reject) => {
     auth.createUserWithEmailAndPassword(email, password)
           .then(res => {
-            console.log(res);
             const newUser = res.user;
             if (!newUser) { return; }
             const user = {
@@ -33,7 +32,7 @@ export const createUser = (email: string, password: string) => (dispatch: Dispat
               email: newUser.email,
               providerId: newUser.providerId,
             };
-            dispatch(FluxAction.createPlaneSuccess(actionTypes.createUser, { user }));
+            dispatch(FluxAction.createPlaneSuccess(authActionTypes.createUser, { user }));
             resolve(res);
           })
           .catch(err => reject(err.message));
@@ -54,7 +53,7 @@ export const loginUser = (email: string, password: string) => (dispatch: Dispatc
               photoURL: currentUser.photoURL,
               providerId: currentUser.providerId,
             };
-            dispatch(FluxAction.createPlaneSuccess(actionTypes.loginUser, { user }));
+            dispatch(FluxAction.createPlaneSuccess(authActionTypes.loginUser, { user }));
             resolve(res);
           })
           .catch(err => reject(err.message));
@@ -65,7 +64,7 @@ export const logoutUser = () => (dispatch: Dispatch<Action>) => {
   return new Promise((resolve, reject) => {
     auth.signOut()
           .then(() => {
-            dispatch(FluxAction.createPlaneSuccess(actionTypes.logoutUser, { user: null }));
+            dispatch(FluxAction.createPlaneSuccess(authActionTypes.logoutUser, { user: null }));
             resolve();
           })
           .catch(err => reject(err.message));

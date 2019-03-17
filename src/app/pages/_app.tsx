@@ -6,10 +6,11 @@ import ReduxThunk from 'redux-thunk';
 import App, { Container } from 'next/app';
 import withRedux from 'next-redux-wrapper';
 
-import { authReducer } from '../store/auth/reducers';
+import { authReducer, dbReducer } from '../store';
 
 const reducers = combineReducers({
   auth: authReducer,
+  db: dbReducer,
 });
 
 const initStore = (initialState = {}, _) => {
