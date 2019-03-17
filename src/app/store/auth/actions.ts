@@ -1,28 +1,30 @@
+import { Action, Dispatch } from 'redux';
+
 import { auth } from '../../firebase';
 import FluxAction from '../FluxAction';
 
-export const actionTypes = {
+export const authActionTypes = {
   fetchUser: 'FETCH_USER',
   createUser: 'CREATE_USER',
   loginUser: 'LOGIN_USER',
   logoutUser: 'LOGOUT_USER',
 };
 
-export const fetchUser = () => dispatch => {
+export const fetchUser = () => (dispatch: Dispatch<Action>) => {
   return new Promise((resolve) => {
-    const user = auth.currentUser;
-    if (user) {
-      dispatch(FluxAction.createPlaneSuccess(actionTypes.fetchUser, { user }));
-      resolve(user);
-    }
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        dispatch(FluxAction.createPlaneSuccess(authActionTypes.fetchUser, { user }));
+        resolve(user);
+      }
+    });
   });
 };
 
-export const createUser = (email: string, password: string) => dispatch => {
+export const createUser = (email: string, password: string) => (dispatch: Dispatch<Action>) => {
   return new Promise((resolve, reject) => {
     auth.createUserWithEmailAndPassword(email, password)
           .then(res => {
-            console.log(res);
             const newUser = res.user;
             if (!newUser) { return; }
             const user = {
@@ -30,14 +32,14 @@ export const createUser = (email: string, password: string) => dispatch => {
               email: newUser.email,
               providerId: newUser.providerId,
             };
-            dispatch(FluxAction.createPlaneSuccess(actionTypes.createUser, { user }));
+            dispatch(FluxAction.createPlaneSuccess(authActionTypes.createUser, { user }));
             resolve(res);
           })
           .catch(err => reject(err.message));
   });
 };
 
-export const loginUser = (email: string, password: string) => dispatch => {
+export const loginUser = (email: string, password: string) => (dispatch: Dispatch<Action>) => {
   return new Promise((resolve, reject) => {
     auth.signInWithEmailAndPassword(email, password)
           .then(res => {
@@ -51,18 +53,18 @@ export const loginUser = (email: string, password: string) => dispatch => {
               photoURL: currentUser.photoURL,
               providerId: currentUser.providerId,
             };
-            dispatch(FluxAction.createPlaneSuccess(actionTypes.loginUser, { user }));
+            dispatch(FluxAction.createPlaneSuccess(authActionTypes.loginUser, { user }));
             resolve(res);
           })
           .catch(err => reject(err.message));
   });
 };
 
-export const logoutUser = () => dispatch => {
+export const logoutUser = () => (dispatch: Dispatch<Action>) => {
   return new Promise((resolve, reject) => {
     auth.signOut()
           .then(() => {
-            dispatch(FluxAction.createPlaneSuccess(actionTypes.logoutUser, { user: null }));
+            dispatch(FluxAction.createPlaneSuccess(authActionTypes.logoutUser, { user: null }));
             resolve();
           })
           .catch(err => reject(err.message));
