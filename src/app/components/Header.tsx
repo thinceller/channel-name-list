@@ -9,7 +9,7 @@ import {
   Modal,
 } from '@material-ui/core';
 
-import { logoutUser } from '../store/auth/actions';
+import { userModule } from '../modules';
 
 interface IHeaderProps {
   user: firebase.UserInfo;
@@ -20,7 +20,7 @@ interface IHeaderProps {
 class Header extends React.Component<IHeaderProps> {
   static mapDispatchToProps(dispatch: any) {
     return bindActionCreators(
-      { logoutUser },
+      { logoutUser: userModule.logoutUser },
       dispatch,
     );
   }

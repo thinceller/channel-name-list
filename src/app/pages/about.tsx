@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 
 import App from '../containers/App';
-import { getAllChannels } from '../store';
+import { channelModule } from '../modules';
 import { bindActionCreators } from 'redux';
 
 const About = ({ getAllChannels }) => {
@@ -16,7 +16,7 @@ const About = ({ getAllChannels }) => {
 
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
-    { getAllChannels },
+    { getAllChannels: channelModule.getAllChannels },
     dispatch,
   );
 };

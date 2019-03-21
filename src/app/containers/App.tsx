@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Head from 'next/head';
 
 import Header from '../components/Header';
-import { fetchUser } from '../store/auth/actions';
+import { userModule } from '../modules';
 
 interface IAppProps {
   user: firebase.UserInfo;
@@ -38,12 +38,12 @@ class App extends React.Component<IAppProps> {
 }
 
 const mapStateToProps = (state: any) => ({
-  user: state.auth.user,
+  user: state.user.user,
 });
 
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
-    { fetchUser },
+    { fetchUser: userModule.fetchUser },
     dispatch,
   );
 };

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Router from 'next/router';
 
-import { loginUser } from '../store/auth/actions';
+import { userModule } from '../modules';
 
 interface ILoginFormProps {
   loginUser: any;
@@ -69,7 +69,7 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
-    { loginUser },
+    { loginUser: userModule.loginUser },
     dispatch,
   );
 };
