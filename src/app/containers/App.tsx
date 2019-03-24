@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Head from 'next/head';
 
-import Header from '../components/Header';
+import Header from './Header';
 import { userModule } from '../modules';
 
 interface IAppProps {
