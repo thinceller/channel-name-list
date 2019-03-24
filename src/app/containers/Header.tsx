@@ -2,14 +2,9 @@ import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Link from 'next/link';
-import {
-  Button,
-  Menu,
-  MenuItem,
-  Modal,
-} from '@material-ui/core';
 
-import { logoutUser } from '../store/auth/actions';
+import { HeaderMenu } from '../components';
+import { userModule } from '../modules';
 
 interface IHeaderProps {
   user: firebase.UserInfo;
@@ -20,7 +15,7 @@ interface IHeaderProps {
 class Header extends React.Component<IHeaderProps> {
   static mapDispatchToProps(dispatch: any) {
     return bindActionCreators(
-      { logoutUser },
+      { logoutUser: userModule.logoutUser },
       dispatch,
     );
   }
@@ -53,44 +48,18 @@ class Header extends React.Component<IHeaderProps> {
     );
   }
 
-  get mypageLink() {
-    return (
-      <>
-        <Button
-          onClick={this.toggleMenu}
-        >
-          メニュー
-        </Button>
-        <Menu id="account_menu" open={this.state.isMenuOpen} onClose={this.toggleMenu}>
-          <MenuItem onClick={this.toggleMenu}>マイページ</MenuItem>
-          <MenuItem onClick={this.toggleMenu}>設定</MenuItem>
-          <MenuItem onClick={this.toggleModal}>ログアウト</MenuItem>
-        </Menu>
-      </>
-    );
-  }
-
   render() {
     const { user, pathname } = this.props;
-    const { isModalOpen } = this.state;
 
     return (
       <header>
         <Link href="/">
           <a className={pathname === '/' ? 'is-active' : ''}>Home</a>
         </Link>
-        <Link href="/about">
-          <a className={pathname === '/about' ? 'is-active' : ''}>About</a>
+        <Link href="/admin">
+          <a className={pathname === '/admin' ? 'is-active' : ''}>管理画面</a>
         </Link>
-        {/* TODO: 管理画面へのリンク */}
-        {user ? this.mypageLink : this.loginLink}
-        <Modal open={isModalOpen} onClose={this.toggleModal}>
-          <div>
-            <h3>ログアウトしますか？</h3>
-            <Button onClick={this.toggleModal}>キャンセル</Button>
-            <Button onClick={this.handleLogoutClick}>はい</Button>
-          </div>
-        </Modal>
+        {user ? <HeaderMenu logoutUser={this.props.logoutUser} /> : this.loginLink}
       </header>
     );
   }
