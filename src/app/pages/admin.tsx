@@ -8,7 +8,7 @@ const About = ({ getAllChannels }) => {
   const handleButtonClick = () => getAllChannels();
   return (
     <App>
-      <p>About Page</p>
+      <h2>管理画面</h2>
       <button onClick={handleButtonClick}>データ取得</button>
     </App>
   );
