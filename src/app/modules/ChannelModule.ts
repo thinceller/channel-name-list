@@ -14,6 +14,7 @@ class ChannelModule {
   // ===========================================================================
   actionType = {
     getAllChannels: 'GET_ALL_CHANNELS',
+    updateChannelData: 'UPDATE_CHANNEL_DATA',
   };
 
   // ===========================================================================
@@ -36,7 +37,11 @@ class ChannelModule {
           res.forEach(doc => {
             const document = doc.data();
             documents = documents.concat(
-              new Channel(document.channelId, document.channelName),
+              new Channel(
+                document.channelId,
+                document.channelName || '',
+                document.channelImage || '',
+              ),
             );
           });
 
@@ -51,6 +56,30 @@ class ChannelModule {
     return promise;
   }
 
+  updateChannelData = (channel: Channel) =>
+    (dispatch: Dispatch<Action>) => {
+      const promise = new Promise((resolve, reject) => {
+        dispatch(FluxAction.createPlaneSuccess(
+          this.actionType.updateChannelData,
+          { channel },
+        ));
+        const channelRef = db.collection('channels').doc(channel.channelId);
+        channelRef
+          .update({
+            channelName: channel.channelName,
+            channelImage: channel.channelImage,
+          })
+          .then(() => {
+            resolve();
+          })
+          .catch(err => {
+            console.error(err);
+            reject(err);
+          });
+      });
+      return promise;
+    }
+
   // ===========================================================================
   //  reducer
   // ===========================================================================
@@ -58,10 +87,34 @@ class ChannelModule {
     switch (action.type) {
       case this.actionType.getAllChannels:
         return Object.assign({}, state, action.payload);
+      case this.actionType.updateChannelData:
+        return Object.assign(
+          {},
+          state,
+          {
+            channels: replaceChannel(state.channels, action.payload.channel),
+          },
+        );
       default:
         return state;
     }
   }
+}
+
+function replaceChannel(stateChannels: Channel[], updatedChannel: Channel) {
+  const updatedChannels = stateChannels.slice(0);
+  const updatedChannelIndex = updatedChannels.findIndex(channel => {
+    return channel.channelId === updatedChannel.channelId;
+  });
+
+  if (updatedChannelIndex > -1) {
+    updatedChannels.splice(updatedChannelIndex, 1, updatedChannel);
+  } else {
+    updatedChannels.push(updatedChannel);
+  }
+
+  console.log(updatedChannels);
+  return updatedChannels;
 }
 
 export default new ChannelModule;
