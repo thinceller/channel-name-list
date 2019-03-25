@@ -7,19 +7,19 @@ import Header from './Header';
 import { userModule } from '../modules';
 
 interface IAppProps {
-  user: firebase.UserInfo;
+  auth: firebase.User;
   children?: React.ReactNode;
-  fetchUser: () => (dispatch: any) => Promise<{}>;
+  fetchAuth: () => (dispatch: any) => Promise<{}>;
 }
 
 class App extends React.Component<IAppProps> {
   componentDidMount() {
-    if (this.props.user) { return; }
-    this.props.fetchUser();
+    if (this.props.auth) { return; }
+    this.props.fetchAuth();
   }
 
   render() {
-    const { user, children } = this.props;
+    const { children } = this.props;
 
     return (
       <main>
@@ -30,7 +30,7 @@ class App extends React.Component<IAppProps> {
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
           />
         </Head>
-        <Header user={user} />
+        <Header />
         {children}
       </main>
     );
@@ -38,12 +38,12 @@ class App extends React.Component<IAppProps> {
 }
 
 const mapStateToProps = (state: any) => ({
-  user: state.user.user,
+  auth: state.user.auth,
 });
 
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
-    { fetchUser: userModule.fetchUser },
+    { fetchAuth: userModule.fetchAuth },
     dispatch,
   );
 };
