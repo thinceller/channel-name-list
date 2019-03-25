@@ -113,7 +113,6 @@ function replaceChannel(stateChannels: Channel[], updatedChannel: Channel) {
     updatedChannels.push(updatedChannel);
   }
 
-  console.log(updatedChannels);
   return updatedChannels;
 }
 

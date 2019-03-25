@@ -15,6 +15,7 @@ import { default as axios } from 'axios';
 
 import { Channel } from '../models';
 import { channelModule } from '../modules';
+import config from '../config';
 
 interface ChannelsIndexProps {
   channels: Channel[];
@@ -81,7 +82,7 @@ interface MyTableRowProps {
 
 class MyTableRow extends React.Component<MyTableRowProps> {
   handleClick = () => {
-    const defaultUrl = process.env.LAMBDA_ENDPOINT;
+    const defaultUrl = config.lambdaEndpoint;
     const stage = process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
     const url = `${defaultUrl}/${stage}?id=${this.props.channel.channelId}`;
     axios
