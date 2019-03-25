@@ -83,8 +83,7 @@ interface MyTableRowProps {
 class MyTableRow extends React.Component<MyTableRowProps> {
   handleClick = () => {
     const defaultUrl = config.lambdaEndpoint;
-    const stage = process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
-    const url = `${defaultUrl}/${stage}?id=${this.props.channel.channelId}`;
+    const url = `${defaultUrl}?id=${this.props.channel.channelId}`;
     axios
       .get(url, { headers: { 'Content-Type': 'application/json' } })
       .then(res => {
