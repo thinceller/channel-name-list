@@ -14,6 +14,7 @@ class ChannelModule {
   // ===========================================================================
   actionType = {
     getAllChannels: 'GET_ALL_CHANNELS',
+    createNewChannel: 'CREATE_NEW_CHANNEL',
     updateChannelData: 'UPDATE_CHANNEL_DATA',
   };
 
@@ -28,7 +29,7 @@ class ChannelModule {
   //  action creators
   // ===========================================================================
   getAllChannels = () => (dispatch: Dispatch<Action>) => {
-    const promise = new Promise((resolve, reject) => {
+    const promise: Promise<Channel[]> = new Promise((resolve, reject) => {
       db.collection('channels')
         .get()
         .then(res => {
@@ -56,9 +57,28 @@ class ChannelModule {
     return promise;
   }
 
+  createNewChannel = (channelId: string) => (dispatch: Dispatch<Action>) => {
+    const promise: Promise<Channel> = new Promise((resolve, reject) => {
+      db.collection('channels')
+        .doc(channelId)
+        .set({ channelId })
+        .then(() => {
+          const newChannel = Channel.createEmpty();
+          newChannel.channelId = channelId;
+          dispatch(FluxAction.createPlaneSuccess(
+            this.actionType.createNewChannel,
+            { channel: newChannel },
+          ));
+          resolve(newChannel);
+        })
+        .catch(err => reject(err));
+    });
+    return promise;
+  }
+
   updateChannelData = (channel: Channel) =>
     (dispatch: Dispatch<Action>) => {
-      const promise = new Promise((resolve, reject) => {
+      const promise: Promise<void> = new Promise((resolve, reject) => {
         dispatch(FluxAction.createPlaneSuccess(
           this.actionType.updateChannelData,
           { channel },
@@ -87,6 +107,7 @@ class ChannelModule {
     switch (action.type) {
       case this.actionType.getAllChannels:
         return Object.assign({}, state, action.payload);
+      case this.actionType.createNewChannel:
       case this.actionType.updateChannelData:
         return Object.assign(
           {},
