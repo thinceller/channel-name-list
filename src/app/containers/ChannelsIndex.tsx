@@ -10,11 +10,9 @@ import {
   Button,
 } from '@material-ui/core';
 import styled from 'styled-components';
-import { default as axios } from 'axios';
 
 import { Channel } from '../models';
 import { channelModule } from '../modules';
-import config from '../config';
 
 interface ChannelsIndexProps {
   channels: Channel[];
