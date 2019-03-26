@@ -21,7 +21,7 @@ interface NewChannelButtonProps {
 
 class NewChannelButton extends React.Component<NewChannelButtonProps> {
   static mapDispatchToProps = (dispatch: any) => ({
-    createNewChannel: () => dispatch(channelModule.createNewChannel),
+    createNewChannel: (id: string) => dispatch(channelModule.createNewChannel(id)),
   })
 
   state = {
