@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import {
   Checkbox,
   Table,
@@ -19,8 +18,8 @@ import config from '../config';
 
 interface ChannelsIndexProps {
   channels: Channel[];
-  getAllChannels: typeof channelModule.getAllChannels;
-  updateChannelData: typeof channelModule.updateChannelData;
+  getAllChannels: () => Promise<Channel[]>;
+  updateChannelData: (channel: Channel) => Promise<void>;
 }
 
 class ChannelsIndex extends React.Component<ChannelsIndexProps> {
@@ -28,18 +27,20 @@ class ChannelsIndex extends React.Component<ChannelsIndexProps> {
     channels: state.channel.channels,
   })
 
-  static mapDispatchToProps = (dispatch: any) => {
-    return bindActionCreators(
-      {
-        getAllChannels: channelModule.getAllChannels,
-        updateChannelData: channelModule.updateChannelData,
-      },
-      dispatch,
-    );
-  }
+  static mapDispatchToProps = (dispatch: any) => ({
+    getAllChannels: () => dispatch(channelModule.getAllChannels()),
+    updateChannelData: (channel: Channel) => dispatch(channelModule.updateChannelData(channel)),
+  })
 
   componentDidMount() {
     this.props.getAllChannels();
+  }
+
+  handleClick = () => {
+    const promises = this.props.channels.map(channel => {
+      return this.props.updateChannelData(channel);
+    });
+    Promise.all(promises);
   }
 
   render() {
@@ -55,7 +56,9 @@ class ChannelsIndex extends React.Component<ChannelsIndexProps> {
             <TableCell />
             <TableCell>チャンネル名</TableCell>
             <TableCell>チャンネルID</TableCell>
-            <TableCell />
+            <TableCell>
+              <Button variant="outlined" onClick={this.handleClick}>一括更新</Button>
+            </TableCell>
             <TableCell />
           </TableRow>
         </TableHead>
@@ -77,21 +80,12 @@ class ChannelsIndex extends React.Component<ChannelsIndexProps> {
 
 interface MyTableRowProps {
   channel: Channel;
-  updateChannelData: typeof channelModule.updateChannelData;
+  updateChannelData: (channel: Channel) => Promise<void>;
 }
 
 class MyTableRow extends React.Component<MyTableRowProps> {
   handleClick = () => {
-    const defaultUrl = config.lambdaEndpoint;
-    const url = `${defaultUrl}?id=${this.props.channel.channelId}`;
-    axios
-      .get(url, { headers: { 'Content-Type': 'application/json' } })
-      .then(res => {
-        const clonedChannel = this.props.channel.clone();
-        clonedChannel.channelName = res.data.body.channelTitle;
-        clonedChannel.channelImage = res.data.body.image;
-        this.props.updateChannelData(clonedChannel);
-      });
+    this.props.updateChannelData(this.props.channel);
   }
   render() {
     const { channel } = this.props;

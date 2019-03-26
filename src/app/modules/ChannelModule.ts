@@ -3,6 +3,8 @@ import { Action, Dispatch } from 'redux';
 import { db } from '../firebase';
 import FluxAction from './FluxAction';
 import { Channel } from '../models';
+import config from '../config';
+import Axios from 'axios';
 
 interface ChannelModuleState {
   channels: Channel[];
@@ -76,29 +78,37 @@ class ChannelModule {
     return promise;
   }
 
-  updateChannelData = (channel: Channel) =>
-    (dispatch: Dispatch<Action>) => {
-      const promise: Promise<void> = new Promise((resolve, reject) => {
-        dispatch(FluxAction.createPlaneSuccess(
-          this.actionType.updateChannelData,
-          { channel },
-        ));
-        const channelRef = db.collection('channels').doc(channel.channelId);
-        channelRef
-          .update({
-            channelName: channel.channelName,
-            channelImage: channel.channelImage,
-          })
-          .then(() => {
-            resolve();
-          })
-          .catch(err => {
-            console.error(err);
-            reject(err);
-          });
-      });
-      return promise;
-    }
+  updateChannelData = (
+    channel: Channel,
+  ) => (
+    dispatch: Dispatch<Action>,
+  ) => {
+    const promise: Promise<void> = new Promise(async (resolve, reject) => {
+      const url = `${config.lambdaEndpoint}?id=${channel.channelId}`;
+      const res = await Axios.get(url, { headers: { 'Content-Type': 'application/json' } });
+      const clonedChannel = channel.clone();
+      clonedChannel.channelName = res.data.body.channelTitle;
+      clonedChannel.channelImage = res.data.body.image;
+      dispatch(FluxAction.createPlaneSuccess(
+        this.actionType.updateChannelData,
+        { channel: clonedChannel },
+      ));
+      const channelRef = db.collection('channels').doc(channel.channelId);
+      channelRef
+        .update({
+          channelName: clonedChannel.channelName,
+          channelImage: clonedChannel.channelImage,
+        })
+        .then(() => {
+          resolve();
+        })
+        .catch(err => {
+          console.error(err);
+          reject(err);
+        });
+    });
+    return promise;
+  }
 
   // ===========================================================================
   //  reducer
