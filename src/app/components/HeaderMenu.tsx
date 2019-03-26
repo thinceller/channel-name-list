@@ -4,10 +4,9 @@ import {
   Button,
   Menu,
   MenuItem,
-  Modal,
+  Dialog,
+  DialogTitle,
 } from '@material-ui/core';
-
-import MyModal from './Modal';
 
 interface HeaderMenuProps {
   logoutUser: () => (dispatch: any) => Promise<{}>;
@@ -34,13 +33,11 @@ class HeaderMenu extends React.Component<HeaderMenuProps> {
           <MenuItem onClick={this.toggleMenu}>設定</MenuItem>
           <MenuItem onClick={this.toggleModal}>ログアウト</MenuItem>
         </Menu>
-        <Modal open={isModalOpen} onClose={this.toggleModal}>
-          <MyModal>
-            <h3>ログアウトしますか？</h3>
-            <Button onClick={this.toggleModal}>キャンセル</Button>
-            <Button onClick={this.props.logoutUser}>はい</Button>
-          </MyModal>
-        </Modal>
+        <Dialog open={isModalOpen} onClose={this.toggleModal}>
+          <DialogTitle>ログアウトしますか？</DialogTitle>
+          <Button onClick={this.toggleModal}>キャンセル</Button>
+          <Button onClick={this.props.logoutUser}>はい</Button>
+        </Dialog>
       </>
     );
   }
