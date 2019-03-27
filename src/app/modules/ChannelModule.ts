@@ -1,10 +1,10 @@
+import Axios from 'axios';
 import { Action, Dispatch } from 'redux';
 
 import { db } from '../firebase';
 import FluxAction from './FluxAction';
 import { Channel } from '../models';
 import config from '../config';
-import Axios from 'axios';
 
 interface ChannelModuleState {
   channels: Channel[];
@@ -35,24 +35,22 @@ class ChannelModule {
       db.collection('channels')
         .get()
         .then(res => {
-          let documents: Channel[] = [];
+          let channels: Channel[] = [];
 
           res.forEach(doc => {
             const document = doc.data();
-            documents = documents.concat(
-              new Channel(
-                document.channelId,
-                document.channelName || '',
-                document.channelImage || '',
-              ),
-            );
+            const channel = Channel.createEmpty();
+            channel.channelId = document.channelId;
+            channel.channelImage = document.channelImage || '';
+            channel.channelName = document.channelName || '';
+            channels = channels.concat(channel);
           });
 
           dispatch(FluxAction.createPlaneSuccess(
             this.actionType.getAllChannels,
-            { channels: documents },
+            { channels },
           ));
-          resolve(documents);
+          resolve(channels);
         })
         .catch(err => reject(err));
     });
