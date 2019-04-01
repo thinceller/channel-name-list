@@ -4,16 +4,15 @@ import {
   Button,
   Dialog,
   DialogTitle,
-  Input,
   FormControl,
   InputLabel,
   DialogContent,
   DialogActions,
 } from '@material-ui/core';
-import { styled } from '@material-ui/styles';
 
 import { channelModule } from '../modules';
 import { Channel } from '../models';
+import { ModalButton, ModalInput } from '../components';
 
 interface NewChannelButtonProps {
   createNewChannel: (id: string) => Promise<Channel>;
@@ -67,36 +66,28 @@ class NewChannelButton extends React.Component<NewChannelButtonProps> {
           <DialogContent>
             <FormControl>
               <InputLabel>チャンネルID</InputLabel>
-              <MyInput value={inputText} onChange={this.handleInputChange} />
+              <ModalInput value={inputText} onChange={this.handleInputChange} />
             </FormControl>
           </DialogContent>
           <DialogActions>
-            <MyButton
+            <ModalButton
               onClick={this.toggleModal}
             >
               キャンセル
-            </MyButton>
-            <MyButton
+            </ModalButton>
+            <ModalButton
+              variant="contained"
               color="primary"
               onClick={this.handleFormSubmit}
             >
               作成
-            </MyButton>
+            </ModalButton>
           </DialogActions>
         </Dialog>
       </>
     );
   }
 }
-
-const MyInput = styled(Input)({
-  marginBottom: 30,
-});
-
-const MyButton = styled(Button)({
-  width: 100,
-  margin: 'auto',
-});
 
 export default connect(
   null,
