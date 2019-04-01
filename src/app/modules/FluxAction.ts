@@ -1,3 +1,8 @@
+import { Action } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
+
+import { State } from '../modules';
+
 export default class FluxAction {
   constructor(
     public type: string,
@@ -23,3 +28,5 @@ export default class FluxAction {
     return new FluxAction(type, {}, {}, error);
   }
 }
+
+export type MyThunkDispatch = ThunkDispatch<State, undefined, Action>;

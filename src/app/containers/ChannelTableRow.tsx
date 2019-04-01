@@ -10,6 +10,7 @@ interface MyTableRowProps {
   channel: Channel;
   fetchChannelData: (channel: Channel) => Promise<void>;
   toggleModal: (channel: Channel) => Promise<void>;
+  toggleLoading: () => Promise<void>;
 }
 
 interface MyTableRowState {
@@ -19,10 +20,14 @@ interface MyTableRowState {
 class MyTableRow extends React.Component<MyTableRowProps, MyTableRowState> {
   static mapDispatchToProps = (dispatch: any) => ({
     toggleModal: (channel: Channel) => dispatch(uiModule.toggleChannelEditModal(channel)),
+    toggleLoading: () => dispatch(uiModule.toggleLoading()),
   })
 
   handleClick = () => {
-    this.props.fetchChannelData(this.props.channel);
+    this.props.toggleLoading();
+    this.props.fetchChannelData(this.props.channel)
+      .then(() => this.props.toggleLoading())
+      .catch(() => this.props.toggleLoading());
   }
 
   handleModalButtonClick = () => {

@@ -1,12 +1,12 @@
 import Axios from 'axios';
 import { Action, Dispatch } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import { db } from '../firebase';
-import FluxAction from './FluxAction';
+import FluxAction, { MyThunkDispatch } from './FluxAction';
 import { Channel } from '../models';
 import config from '../config';
-import { State } from 'modules';
-import { ThunkDispatch } from 'redux-thunk';
+import { State, uiModule } from '../modules';
 
 export type ChannelModuleState = {
   channels: Channel[],
@@ -69,7 +69,8 @@ class ChannelModule {
     return promise;
   }
 
-  createNewChannel = (id: string) => (dispatch: Dispatch<Action>) => {
+  createNewChannel = (id: string) => (dispatch: MyThunkDispatch) => {
+    dispatch(uiModule.toggleLoading());
     const promise: Promise<Channel> = new Promise((resolve, reject) => {
       db.collection('channels')
         .doc(id)
@@ -81,9 +82,13 @@ class ChannelModule {
             this.actionType.createNewChannel,
             { channel: newChannel },
           ));
+          dispatch(uiModule.toggleLoading());
           resolve(newChannel);
         })
-        .catch(err => reject(err));
+        .catch(err => {
+          dispatch(uiModule.toggleLoading());
+          reject(err);
+        });
     });
     return promise;
   }
@@ -91,7 +96,7 @@ class ChannelModule {
   fetchChannelData = (
     channel: Channel,
   ) => (
-    dispatch: Dispatch<Action>,
+    dispatch: MyThunkDispatch,
   ) => {
     const promise: Promise<void> = new Promise(async (resolve, reject) => {
       const url = `${config.lambdaEndpoint}?id=${channel.id}`;
@@ -124,6 +129,7 @@ class ChannelModule {
     dispatch: ThunkDispatch<State, undefined, Action>,
     getState: () => State,
   ) => {
+    dispatch(uiModule.toggleLoading());
     const promise = new Promise((resolve, reject) => {
       const channel = getState().channel.editingChannel;
       dispatch(FluxAction.createPlaneSuccess(
@@ -138,10 +144,12 @@ class ChannelModule {
           number: channel.number,
         })
         .then(() => {
+          dispatch(uiModule.toggleLoading());
           resolve();
         })
         .catch(err => {
           console.error(err);
+          dispatch(uiModule.toggleLoading());
           reject(err);
         });
     });

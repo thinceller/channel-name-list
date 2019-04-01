@@ -11,13 +11,14 @@ import {
 } from '@material-ui/core';
 
 import { Channel } from '../models';
-import { channelModule } from '../modules';
+import { channelModule, uiModule } from '../modules';
 import ChannelTableRow from './ChannelTableRow';
 
 interface ChannelsIndexProps {
   channels: Channel[];
   getAllChannels: () => Promise<Channel[]>;
   fetchChannelData: (channel: Channel) => Promise<void>;
+  toggleLoading: () => Promise<void>;
 }
 
 class ChannelsIndex extends React.Component<ChannelsIndexProps> {
@@ -28,17 +29,21 @@ class ChannelsIndex extends React.Component<ChannelsIndexProps> {
   static mapDispatchToProps = (dispatch: any) => ({
     getAllChannels: () => dispatch(channelModule.getAllChannels()),
     fetchChannelData: (channel: Channel) => dispatch(channelModule.fetchChannelData(channel)),
+    toggleLoading: () => dispatch(uiModule.toggleLoading()),
   })
 
   componentDidMount() {
     this.props.getAllChannels();
   }
 
-  handleClick = () => {
+  handleBuldClick = () => {
+    this.props.toggleLoading();
     const promises = this.props.channels.map(channel => {
       return this.props.fetchChannelData(channel);
     });
-    Promise.all(promises);
+    Promise.all(promises)
+      .then(() => this.props.toggleLoading())
+      .catch(() => this.props.toggleLoading());
   }
 
   render() {
@@ -56,7 +61,7 @@ class ChannelsIndex extends React.Component<ChannelsIndexProps> {
             <TableCell>チャンネル名</TableCell>
             <TableCell>チャンネルID</TableCell>
             <TableCell>
-              <Button variant="outlined" onClick={this.handleClick}>一括更新</Button>
+              <Button variant="outlined" onClick={this.handleBuldClick}>一括更新</Button>
             </TableCell>
             <TableCell />
           </TableRow>
