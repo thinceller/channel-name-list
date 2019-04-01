@@ -1,6 +1,7 @@
 import {
   App,
   ChannelsIndex,
+  ChannelEditModal,
   NewChannelButton,
 } from '../containers';
 
@@ -9,6 +10,7 @@ const About = () => (
       <h2>管理画面</h2>
       <NewChannelButton />
       <ChannelsIndex />
+      <ChannelEditModal />
     </App>
 );
 

@@ -1,12 +1,14 @@
 export default class Channel {
   constructor(
-    public channelId: string,
-    public channelName: string,
-    public channelImage: string,
+    public number: number,
+    public id: string,
+    public name: string,
+    public image: string,
   ) {}
 
   static createEmpty(): Channel {
     return new Channel(
+      0,
       '',
       '',
       '',
@@ -15,9 +17,10 @@ export default class Channel {
 
   clone(): Channel {
     return new Channel(
-      this.channelId,
-      this.channelName,
-      this.channelImage,
+      this.number,
+      this.id,
+      this.name,
+      this.image,
     );
   }
 }

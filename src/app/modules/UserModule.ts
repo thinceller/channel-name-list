@@ -3,14 +3,14 @@ import { Action, Dispatch } from 'redux';
 import { auth, db } from '../firebase';
 import FluxAction from './FluxAction';
 
-interface UserModuleState {
-  auth: firebase.User | null;
+export type UserModuleState = {
+  auth: firebase.User | null,
   user: {
     uid: string,
     displayName: string,
     authority: string,
-  } | null;
-}
+  } | null,
+};
 
 class UserModule {
   // ===========================================================================

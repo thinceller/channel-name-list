@@ -9,15 +9,15 @@ import {
   TableCell,
   Button,
 } from '@material-ui/core';
-import styled from 'styled-components';
 
 import { Channel } from '../models';
 import { channelModule } from '../modules';
+import ChannelTableRow from './ChannelTableRow';
 
 interface ChannelsIndexProps {
   channels: Channel[];
   getAllChannels: () => Promise<Channel[]>;
-  updateChannelData: (channel: Channel) => Promise<void>;
+  fetchChannelData: (channel: Channel) => Promise<void>;
 }
 
 class ChannelsIndex extends React.Component<ChannelsIndexProps> {
@@ -27,7 +27,7 @@ class ChannelsIndex extends React.Component<ChannelsIndexProps> {
 
   static mapDispatchToProps = (dispatch: any) => ({
     getAllChannels: () => dispatch(channelModule.getAllChannels()),
-    updateChannelData: (channel: Channel) => dispatch(channelModule.updateChannelData(channel)),
+    fetchChannelData: (channel: Channel) => dispatch(channelModule.fetchChannelData(channel)),
   })
 
   componentDidMount() {
@@ -36,7 +36,7 @@ class ChannelsIndex extends React.Component<ChannelsIndexProps> {
 
   handleClick = () => {
     const promises = this.props.channels.map(channel => {
-      return this.props.updateChannelData(channel);
+      return this.props.fetchChannelData(channel);
     });
     Promise.all(promises);
   }
@@ -51,6 +51,7 @@ class ChannelsIndex extends React.Component<ChannelsIndexProps> {
             <TableCell>
               <Checkbox />
             </TableCell>
+            <TableCell>番号</TableCell>
             <TableCell />
             <TableCell>チャンネル名</TableCell>
             <TableCell>チャンネルID</TableCell>
@@ -63,10 +64,10 @@ class ChannelsIndex extends React.Component<ChannelsIndexProps> {
         <TableBody>
           {channels.map(channel => {
             return (
-              <MyTableRow
-                key={channel.channelId}
+              <ChannelTableRow
+                key={channel.id}
                 channel={channel}
-                updateChannelData={this.props.updateChannelData}
+                fetchChannelData={this.props.fetchChannelData}
               />
             );
           })}
@@ -75,49 +76,6 @@ class ChannelsIndex extends React.Component<ChannelsIndexProps> {
     );
   }
 }
-
-interface MyTableRowProps {
-  channel: Channel;
-  updateChannelData: (channel: Channel) => Promise<void>;
-}
-
-class MyTableRow extends React.Component<MyTableRowProps> {
-  handleClick = () => {
-    this.props.updateChannelData(this.props.channel);
-  }
-  render() {
-    const { channel } = this.props;
-
-    return (
-      <TableRow>
-        <TableCell>
-          <Checkbox />
-        </TableCell>
-        <TableCell>
-          <MyImg alt={channel.channelName} src={channel.channelImage} />
-        </TableCell>
-        <TableCell>{channel.channelName}</TableCell>
-        <TableCell>{channel.channelId}</TableCell>
-        <TableCell>
-          <Button variant="outlined" onClick={this.handleClick}>更新</Button>
-        </TableCell>
-        <TableCell>
-          <Button variant="contained">編集</Button>
-        </TableCell>
-      </TableRow>
-    );
-  }
-}
-
-interface MyImgProps {
-  alt: string;
-  src: string;
-}
-
-const MyImg = styled('img')<MyImgProps>`
-  width: 50px;
-  height: auto;
-`;
 
 export default connect(
   ChannelsIndex.mapStateToProps,
