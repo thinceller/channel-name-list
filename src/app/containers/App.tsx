@@ -31,6 +31,7 @@ class App extends React.Component<IAppProps> {
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
           />
+          <link href="../static/theme.css" rel="stylesheet" />
         </Head>
         <Loading isLoading={isLoading} />
         <Header />

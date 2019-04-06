@@ -4,7 +4,6 @@ import * as Autosuggest from 'react-autosuggest';
 
 import { State, channelModule, channelListModule } from '../../modules';
 import { Channel } from '../../models';
-const theme = require('./theme.css');
 
 interface ChannelSuggestion {
   name: string;
@@ -45,6 +44,10 @@ class ChannelSuggest extends React.Component<ChannelSuggestProps, ChannelSuggest
 
   componentDidMount() {
     this.props.getAllChannels();
+  }
+
+  componentWillUnmount() {
+    this.props.handleSuggestingChange('');
   }
 
   getSuggestions = (value: string): ChannelSuggestion[] => {
@@ -95,7 +98,6 @@ class ChannelSuggest extends React.Component<ChannelSuggestProps, ChannelSuggest
 
     return (
       <LanguageAutosuggest
-        theme={theme}
         suggestions={suggestions}
         onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
         onSuggestionsClearRequested={this.onSuggestionsClearRequested}
