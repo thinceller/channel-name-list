@@ -12,7 +12,7 @@
     "deploy": "cross-env NODE_ENV=production firebase deploy",
     "clean": "rimraf \"dist/functions\" && rimraf \"dist/public\"",
     "build-app": "next build \"src/app\"",
-    "build-public": "cpx \"src/public/**/*.*\" \"dist/public\" -C",
+    "build-public": "cpx \"src/public/**/*.*\" \"dist/public\" -C && cpx \"src/app/static/**/*.*\" \"dist/public/static\" -C",
     "build-functions": "tsc --project src/functions",
     "lint-app": "tslint --project src/app",
     "typecheck-app": "tsc --project src/app",
