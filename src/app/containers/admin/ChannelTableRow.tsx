@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import { TableRow, TableCell, Checkbox, Button } from '@material-ui/core';
 import styled from 'styled-components';
 
-import { Channel } from '../models';
-import { uiModule } from '../modules';
+import { Channel } from '../../models';
+import { uiModule } from '../../modules';
 
 interface MyTableRowProps {
   channel: Channel;
@@ -47,7 +47,8 @@ class MyTableRow extends React.Component<MyTableRowProps, MyTableRowState> {
           <MyImg alt={channel.name} src={channel.image} />
         </TableCell>
         <TableCell>{channel.name}</TableCell>
-        <TableCell>{channel.id}</TableCell>
+        <TableCell>{channel.liverName}</TableCell>
+        <TableCell>{channel.liverPhonetic}</TableCell>
         <TableCell>
           <Button variant="outlined" onClick={this.handleClick}>更新</Button>
         </TableCell>

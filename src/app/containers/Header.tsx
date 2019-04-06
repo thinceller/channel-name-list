@@ -68,6 +68,11 @@ class Header extends React.Component<IHeaderProps> {
             <a className={pathname === '/admin' ? 'is-active' : ''}>管理画面</a>
           </Link>
         )}
+        {user && (
+          <Link href="/list">
+            <a className={pathname === '/list' ? 'is-active' : ''}>チャンネルリスト</a>
+          </Link>
+        )}
         {auth ? <HeaderMenu logoutUser={this.props.logoutUser} /> : this.loginLink}
       </header>
     );

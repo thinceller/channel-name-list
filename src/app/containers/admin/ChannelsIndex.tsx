@@ -10,8 +10,8 @@ import {
   Button,
 } from '@material-ui/core';
 
-import { Channel } from '../models';
-import { channelModule, uiModule } from '../modules';
+import { Channel } from '../../models';
+import { channelModule, uiModule } from '../../modules';
 import ChannelTableRow from './ChannelTableRow';
 
 interface ChannelsIndexProps {
@@ -59,7 +59,8 @@ class ChannelsIndex extends React.Component<ChannelsIndexProps> {
             <TableCell>番号</TableCell>
             <TableCell />
             <TableCell>チャンネル名</TableCell>
-            <TableCell>チャンネルID</TableCell>
+            <TableCell>ライバー名</TableCell>
+            <TableCell>ふりがな</TableCell>
             <TableCell>
               <Button variant="outlined" onClick={this.handleBuldClick}>一括更新</Button>
             </TableCell>

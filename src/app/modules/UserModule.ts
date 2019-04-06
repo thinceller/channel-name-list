@@ -1,7 +1,8 @@
 import { Action, Dispatch } from 'redux';
 
 import { auth, db } from '../firebase';
-import FluxAction from './FluxAction';
+import FluxAction, { MyThunkDispatch } from './FluxAction';
+import { channelListModule } from '../modules';
 
 export type UserModuleState = {
   auth: firebase.User | null,
@@ -35,7 +36,7 @@ class UserModule {
   // ===========================================================================
   //  action creators
   // ===========================================================================
-  fetchAuth = () => (dispatch: Dispatch<Action>) => {
+  fetchAuth = () => (dispatch: MyThunkDispatch) => {
     const promise = new Promise((resolve) => {
       auth.onAuthStateChanged(auth => {
         if (auth) {
@@ -53,6 +54,9 @@ class UserModule {
                   this.actionType.fetchUser,
                   { user },
                 ));
+                if (user && user.channelList) {
+                  dispatch(channelListModule.setChannelList(user.channelList));
+                }
               }
             });
           resolve(auth);
@@ -72,6 +76,9 @@ class UserModule {
             this.actionType.createUser,
             { user },
           ));
+          db.collection('users')
+            .doc(user.uid)
+            .set({ authority: 'user', uid: user.uid });
           resolve(user);
         })
         .catch(err => reject(err));

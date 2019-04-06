@@ -5,18 +5,18 @@ import FluxAction from './FluxAction';
 import { Channel } from '../models';
 import { channelModule, State } from '../modules';
 
-export type UiModuleState = {
+export type UIModuleState = {
   isChannelEditModalOpen: boolean,
   isLoading: boolean,
 };
 
-class UiModule {
+class UIModule {
   actionType = {
     toggleChannelEditModal: 'TOGGLE_CHANNEL_EDIT_MODAL',
     toggleLoading: 'TOGGLE_LOADING',
   };
 
-  state: UiModuleState = {
+  state: UIModuleState = {
     isChannelEditModalOpen: false,
     isLoading: false,
   };
@@ -24,16 +24,16 @@ class UiModule {
   toggleChannelEditModal = (
     channel: Channel | null,
   ) => (
-    dispatch: ThunkDispatch<UiModuleState, undefined, Action>,
+    dispatch: ThunkDispatch<UIModuleState, undefined, Action>,
     getState: () => State,
   ) => {
     const promise = new Promise((resolve) => {
       const { isChannelEditModalOpen } = getState().ui;
-      dispatch(channelModule.setEditingChannel(channel));
       dispatch(FluxAction.createPlaneSuccess(
         this.actionType.toggleChannelEditModal,
         { isChannelEditModalOpen: !isChannelEditModalOpen },
       ));
+      dispatch(channelModule.setEditingChannel(channel));
       resolve();
     });
     return promise;
@@ -54,7 +54,7 @@ class UiModule {
     return promise;
   }
 
-  reducer = (state: UiModuleState = this.state, action: FluxAction): UiModuleState => {
+  reducer = (state: UIModuleState = this.state, action: FluxAction): UIModuleState => {
     switch (action.type) {
       case this.actionType.toggleChannelEditModal:
       case this.actionType.toggleLoading:
@@ -65,4 +65,4 @@ class UiModule {
   }
 }
 
-export default new UiModule();
+export default new UIModule();

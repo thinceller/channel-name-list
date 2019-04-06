@@ -51,6 +51,8 @@ class ChannelModule {
             channel.number = document.number | 0;
             channel.image = document.image || '';
             channel.name = document.name || '';
+            channel.liverName = document.liverName || '';
+            channel.liverPhonetic = document.liverPhonetic || '';
             channels = channels.concat(channel);
           });
 
@@ -142,6 +144,8 @@ class ChannelModule {
         .update({
           id: channel.id,
           number: channel.number,
+          liverName: channel.liverName,
+          liverPhonetic: channel.liverPhonetic,
         })
         .then(() => {
           dispatch(uiModule.toggleLoading());

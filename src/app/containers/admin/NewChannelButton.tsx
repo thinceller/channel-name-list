@@ -10,9 +10,9 @@ import {
   DialogActions,
 } from '@material-ui/core';
 
-import { channelModule } from '../modules';
-import { Channel } from '../models';
-import { ModalButton, ModalInput } from '../components';
+import { channelModule } from '../../modules';
+import { Channel } from '../../models';
+import { ModalButton, ModalInput } from '../../components';
 
 interface NewChannelButtonProps {
   createNewChannel: (id: string) => Promise<Channel>;

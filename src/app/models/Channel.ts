@@ -4,11 +4,15 @@ export default class Channel {
     public id: string,
     public name: string,
     public image: string,
+    public liverName: string,
+    public liverPhonetic: string,
   ) {}
 
   static createEmpty(): Channel {
     return new Channel(
       0,
+      '',
+      '',
       '',
       '',
       '',
@@ -21,6 +25,8 @@ export default class Channel {
       this.id,
       this.name,
       this.image,
+      this.liverName,
+      this.liverPhonetic,
     );
   }
 }

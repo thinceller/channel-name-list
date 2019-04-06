@@ -10,9 +10,9 @@ import {
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 
-import { Channel } from '../models';
-import { uiModule, channelModule } from '../modules';
-import { ModalButton } from '../components';
+import { Channel } from '../../models';
+import { uiModule, channelModule } from '../../modules';
+import { ModalButton } from '../../components';
 
 type ChannelEditModalProps = {
   channel: Channel,
@@ -71,6 +71,26 @@ class ChannelEditModal extends React.Component<ChannelEditModalProps> {
               name="id"
               type="string"
               value={channel.id}
+              onChange={this.handleInputChange}
+            />
+          </FormControl>
+          <br />
+          <FormControl>
+            <InputLabel>ライバー名</InputLabel>
+            <Input
+              name="liverName"
+              type="string"
+              value={channel.liverName}
+              onChange={this.handleInputChange}
+            />
+          </FormControl>
+          <br />
+          <FormControl>
+            <InputLabel>ふりがな</InputLabel>
+            <Input
+              name="liverPhonetic"
+              type="string"
+              value={channel.liverPhonetic}
               onChange={this.handleInputChange}
             />
           </FormControl>
