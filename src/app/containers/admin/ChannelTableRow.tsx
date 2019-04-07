@@ -65,7 +65,7 @@ interface MyImgProps {
   src: string;
 }
 
-const MyImg = styled('img')<MyImgProps>`
+export const MyImg = styled('img')<MyImgProps>`
   width: 50px;
   height: auto;
 `;

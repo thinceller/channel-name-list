@@ -1,24 +1,27 @@
 import { Action, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import FluxAction from './FluxAction';
+import FluxAction, { MyThunkDispatch } from './FluxAction';
 import { Channel } from '../models';
 import { channelModule, State } from '../modules';
 
 export type UIModuleState = {
   isChannelEditModalOpen: boolean,
   isLoading: boolean,
+  isRemoveFromListModal: boolean,
 };
 
 class UIModule {
   actionType = {
     toggleChannelEditModal: 'TOGGLE_CHANNEL_EDIT_MODAL',
     toggleLoading: 'TOGGLE_LOADING',
+    toggleRemoveFromListModal: 'TOGGLE_REMOVE_FROM_LIST_MODAL',
   };
 
   state: UIModuleState = {
     isChannelEditModalOpen: false,
     isLoading: false,
+    isRemoveFromListModal: false,
   };
 
   toggleChannelEditModal = (
@@ -54,10 +57,23 @@ class UIModule {
     return promise;
   }
 
+  toggleRemoveFromListModal = () => (dispatch: MyThunkDispatch, getState: () => State) => {
+    const promise = new Promise((resolve) => {
+      const { isRemoveFromListModal } = getState().ui;
+      dispatch(FluxAction.createPlaneSuccess(
+        this.actionType.toggleRemoveFromListModal,
+        { isRemoveFromListModal: !isRemoveFromListModal },
+      ));
+      resolve();
+    });
+    return promise;
+  }
+
   reducer = (state: UIModuleState = this.state, action: FluxAction): UIModuleState => {
     switch (action.type) {
       case this.actionType.toggleChannelEditModal:
       case this.actionType.toggleLoading:
+      case this.actionType.toggleRemoveFromListModal:
         return Object.assign({}, state, action.payload);
       default:
         return state;

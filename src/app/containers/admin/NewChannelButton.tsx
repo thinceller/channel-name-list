@@ -54,6 +54,7 @@ class NewChannelButton extends React.Component<NewChannelButtonProps> {
         <Button
           variant="contained"
           color="primary"
+          style={{ marginBottom: 20 }}
           onClick={this.toggleModal}
         >
           新規チャンネル追加

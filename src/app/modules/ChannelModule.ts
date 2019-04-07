@@ -37,8 +37,10 @@ class ChannelModule {
   // ===========================================================================
   //  action creators
   // ===========================================================================
-  getAllChannels = () => (dispatch: Dispatch<Action>) => {
+  getAllChannels = () => (dispatch: Dispatch<Action>, getState: () => State) => {
     const promise: Promise<Channel[]> = new Promise((resolve, reject) => {
+      if (getState().channel.channels.length !== 0) { resolve(); }
+
       db.collection('channels')
         .get()
         .then(res => {
@@ -212,7 +214,7 @@ class ChannelModule {
 }
 
 function replaceChannel(stateChannels: Channel[], updatedChannel: Channel) {
-  const updatedChannels = stateChannels.slice(0);
+  const updatedChannels = stateChannels.slice();
   const updatedChannelIndex = updatedChannels.findIndex(channel => {
     return channel.id === updatedChannel.id;
   });

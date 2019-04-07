@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import Link from 'next/link';
 import { Button } from '@material-ui/core';
 import { styled } from '@material-ui/styles';
 
 import { State, channelListModule } from '../../modules';
 import ChannelSuggest from './ChannelSuggest';
-import Link from 'next/link';
+import MyListTable from './MyListTable';
 
 interface MyListProps {
   user: State['user']['user'];
@@ -24,6 +25,11 @@ class MyList extends React.Component<MyListProps> {
     createChannelList: () => dispatch(channelListModule.createChannelList()),
     addChannelToList: () => dispatch(channelListModule.addChannelToList()),
   })
+
+  handleSuggestSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    this.props.addChannelToList();
+  }
 
   get loginHelp() {
     return (
@@ -61,14 +67,17 @@ class MyList extends React.Component<MyListProps> {
                   >
                     リストをコピー
                   </CopyButton>
-                  <ChannelSuggest />
-                  <AddButton
-                    variant="outlined"
-                    color="primary"
-                    onClick={this.props.addChannelToList}
-                  >
-                    リストに追加
-                  </AddButton>
+                  <form onSubmit={this.handleSuggestSubmit}>
+                    <ChannelSuggest />
+                    <AddButton
+                      type="submit"
+                      variant="outlined"
+                      color="primary"
+                    >
+                      リストに追加
+                    </AddButton>
+                  </form>
+                  <MyListTable />
                 </>
               : this.listCreateButton
         }
@@ -78,8 +87,7 @@ class MyList extends React.Component<MyListProps> {
 }
 
 const CopyButton = styled(Button)({
-  display: 'inline-block',
-  marginRight: 80,
+  marginBottom: 30,
 });
 
 const AddButton = styled(Button)({

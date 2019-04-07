@@ -50,7 +50,7 @@ class ChannelsIndex extends React.Component<ChannelsIndexProps> {
     const { channels } = this.props;
 
     return (
-      <Table>
+      <Table style={{ border: '1px solid #aaa' }}>
         <TableHead>
           <TableRow>
             <TableCell>

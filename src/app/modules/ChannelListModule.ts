@@ -1,6 +1,7 @@
 import { db } from '../firebase';
 import FluxAction, { MyThunkDispatch } from './FluxAction';
 import { State } from '../modules';
+import { Channel } from '../models';
 
 export type ChannelListModuleState = {
   channelList: string[] | null,
@@ -12,6 +13,7 @@ class ChannelListModule {
     setChannelList: 'SET_CHANNEL_LIST',
     handleSuggestingChange: 'HANDLE_SUGGESTING_CHANGE',
     addChannelToList: 'ADD_CHANNEL_TO_LIST',
+    removeChannelFromList: 'REMOVE_CHANNEL_FROM_LIST',
   };
 
   state: ChannelListModuleState = {
@@ -64,13 +66,13 @@ class ChannelListModule {
     const promise = new Promise((resolve, reject) => {
       const { channels } = getState().channel;
       const liverName = getState().channelList.suggestingChannel || '';
-      const selectedChannel = channels.find(channel => channel.name === liverName);
+      const selectedChannel = channels.find(channel => channel.liverName === liverName);
 
       if (!selectedChannel) {
         reject({ message: 'not selected' });
       } else {
         const { user } = getState().user;
-        const { channelList } = getState().channelList;
+        let { channelList } = getState().channelList;
         if (user === null) {
           // ログインしていないと無効
           reject({ message: 'user is null' });
@@ -79,6 +81,8 @@ class ChannelListModule {
           reject({ message: 'no channel list' });
         } else {
           const userRef = db.collection('users').doc(user.uid);
+          // コピー
+          channelList = channelList.slice();
           channelList.push(selectedChannel.id);
           userRef
             .update({ channelList })
@@ -97,6 +101,40 @@ class ChannelListModule {
     return promise;
   }
 
+  removeChannelFromList = (
+    channel: Channel,
+  ) => (
+    dispatch: MyThunkDispatch,
+    getState: () => State,
+  ) => {
+    const promise = new Promise((resolve, reject) => {
+      let oldList = getState().channelList.channelList;
+      if (oldList === null) {
+        oldList = [];
+      } else {
+        oldList = oldList.slice();
+      }
+      const newChannelList = oldList.filter(channelId => channelId !== channel.id);
+
+      const { user } = getState().user;
+      if (!user) {
+        reject({ message: 'user is null' });
+      } else {
+        const userRef = db.collection('users').doc(user.uid);
+        userRef.update({ channelList: newChannelList })
+          .then(() => {
+            dispatch(FluxAction.createPlaneSuccess(
+              this.actionType.removeChannelFromList,
+              { channelList: newChannelList },
+            ));
+            resolve();
+          })
+          .catch(err => reject(err));
+      }
+    });
+    return promise;
+  }
+
   reducer = (
     state: ChannelListModuleState = this.state,
     action: FluxAction,
@@ -104,8 +142,9 @@ class ChannelListModule {
     switch (action.type) {
       case this.actionType.setChannelList:
       case this.actionType.handleSuggestingChange:
-        return Object.assign({}, state, action.payload);
       case this.actionType.addChannelToList:
+      case this.actionType.removeChannelFromList:
+        return Object.assign({}, state, action.payload);
       default:
         return state;
     }
