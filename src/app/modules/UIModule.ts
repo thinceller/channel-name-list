@@ -3,7 +3,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import FluxAction, { MyThunkDispatch } from './FluxAction';
 import { Channel } from '../models';
-import { channelModule, State } from '../modules';
+import { channelModule, channelListModule, State } from '../modules';
 
 export type UIModuleState = {
   isChannelEditModalOpen: boolean,
@@ -15,7 +15,8 @@ class UIModule {
   actionType = {
     toggleChannelEditModal: 'TOGGLE_CHANNEL_EDIT_MODAL',
     toggleLoading: 'TOGGLE_LOADING',
-    toggleRemoveFromListModal: 'TOGGLE_REMOVE_FROM_LIST_MODAL',
+    openRemoveFromListModal: 'OPEN_REMOVE_FROM_LIST_MODAL',
+    closeRemoveFromListModal: 'CLOSE_REMOVE_FROM_LIST_MODAL',
   };
 
   state: UIModuleState = {
@@ -57,13 +58,25 @@ class UIModule {
     return promise;
   }
 
-  toggleRemoveFromListModal = () => (dispatch: MyThunkDispatch, getState: () => State) => {
+  openRemoveFromListModal = (channel: Channel) => (dispatch: MyThunkDispatch) => {
     const promise = new Promise((resolve) => {
-      const { isRemoveFromListModal } = getState().ui;
+      dispatch(channelListModule.setRemovingChannel(channel));
       dispatch(FluxAction.createPlaneSuccess(
-        this.actionType.toggleRemoveFromListModal,
-        { isRemoveFromListModal: !isRemoveFromListModal },
+        this.actionType.openRemoveFromListModal,
+        { isRemoveFromListModal: true },
       ));
+      resolve();
+    });
+    return promise;
+  }
+
+  closeRemoveFromListModal = () => (dispatch: MyThunkDispatch) => {
+    const promise = new Promise((resolve) => {
+      dispatch(FluxAction.createPlaneSuccess(
+        this.actionType.closeRemoveFromListModal,
+        { isRemoveFromListModal: false },
+      ));
+      dispatch(channelListModule.setRemovingChannel(Channel.createEmpty()));
       resolve();
     });
     return promise;
@@ -73,7 +86,8 @@ class UIModule {
     switch (action.type) {
       case this.actionType.toggleChannelEditModal:
       case this.actionType.toggleLoading:
-      case this.actionType.toggleRemoveFromListModal:
+      case this.actionType.openRemoveFromListModal:
+      case this.actionType.closeRemoveFromListModal:
         return Object.assign({}, state, action.payload);
       default:
         return state;

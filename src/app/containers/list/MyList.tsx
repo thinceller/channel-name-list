@@ -7,6 +7,7 @@ import { styled } from '@material-ui/styles';
 import { State, channelListModule } from '../../modules';
 import ChannelSuggest from './ChannelSuggest';
 import MyListTable from './MyListTable';
+import RemoveFromListModal from './RemoveFromListModal';
 
 interface MyListProps {
   user: State['user']['user'];
@@ -54,6 +55,7 @@ class MyList extends React.Component<MyListProps> {
 
   render() {
     const { user, channelList } = this.props;
+
     return (
       <>
         {
@@ -78,6 +80,7 @@ class MyList extends React.Component<MyListProps> {
                     </AddButton>
                   </form>
                   <MyListTable />
+                  <RemoveFromListModal />
                 </>
               : this.listCreateButton
         }

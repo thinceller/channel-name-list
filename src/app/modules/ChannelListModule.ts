@@ -6,6 +6,7 @@ import { Channel } from '../models';
 export type ChannelListModuleState = {
   channelList: string[] | null,
   suggestingChannel: string,
+  removingChannel: Channel,
 };
 
 class ChannelListModule {
@@ -14,11 +15,13 @@ class ChannelListModule {
     handleSuggestingChange: 'HANDLE_SUGGESTING_CHANGE',
     addChannelToList: 'ADD_CHANNEL_TO_LIST',
     removeChannelFromList: 'REMOVE_CHANNEL_FROM_LIST',
+    setRemovingChannel: 'SET_REMOVING_CHANNEL',
   };
 
   state: ChannelListModuleState = {
     channelList: null,
     suggestingChannel: '',
+    removingChannel: Channel.createEmpty(),
   };
 
   setChannelList = (channelList: any) => (dispatch: MyThunkDispatch) => {
@@ -101,13 +104,9 @@ class ChannelListModule {
     return promise;
   }
 
-  removeChannelFromList = (
-    channel: Channel,
-  ) => (
-    dispatch: MyThunkDispatch,
-    getState: () => State,
-  ) => {
+  removeChannelFromList = () => (dispatch: MyThunkDispatch, getState: () => State) => {
     const promise = new Promise((resolve, reject) => {
+      const channel = getState().channelList.removingChannel;
       let oldList = getState().channelList.channelList;
       if (oldList === null) {
         oldList = [];
@@ -135,6 +134,17 @@ class ChannelListModule {
     return promise;
   }
 
+  setRemovingChannel = (channel: Channel) => (dispatch: MyThunkDispatch) => {
+    const promise = new Promise((resolve) => {
+      dispatch(FluxAction.createPlaneSuccess(
+        this.actionType.setRemovingChannel,
+        { removingChannel: channel },
+      ));
+      resolve();
+    });
+    return promise;
+  }
+
   reducer = (
     state: ChannelListModuleState = this.state,
     action: FluxAction,
@@ -144,6 +154,7 @@ class ChannelListModule {
       case this.actionType.handleSuggestingChange:
       case this.actionType.addChannelToList:
       case this.actionType.removeChannelFromList:
+      case this.actionType.setRemovingChannel:
         return Object.assign({}, state, action.payload);
       default:
         return state;
