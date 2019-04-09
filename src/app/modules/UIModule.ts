@@ -4,7 +4,6 @@ import { ThunkDispatch } from 'redux-thunk';
 import FluxAction, { MyThunkDispatch } from './FluxAction';
 import { Channel } from '../models';
 import { channelModule, channelListModule, State } from '../modules';
-import { resolve } from 'url';
 
 export type UIModuleState = {
   isChannelEditModalOpen: boolean,
