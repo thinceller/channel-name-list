@@ -4,16 +4,18 @@ import Link from 'next/link';
 import { Button } from '@material-ui/core';
 import { styled } from '@material-ui/styles';
 
-import { State, channelListModule } from '../../modules';
+import { State, channelListModule, uiModule } from '../../modules';
 import ChannelSuggest from './ChannelSuggest';
 import MyListTable from './MyListTable';
 import RemoveFromListModal from './RemoveFromListModal';
+import AddAllChannelModal from './AddAllChannelModal';
 
 interface MyListProps {
   user: State['user']['user'];
   channelList: State['channelList'];
   createChannelList: () => Promise<void>;
   addChannelToList: () => Promise<void>;
+  toggleAddAllChannelModal: () => Promise<void>;
 }
 
 class MyList extends React.Component<MyListProps> {
@@ -25,6 +27,7 @@ class MyList extends React.Component<MyListProps> {
   static mapDispatchToProps = (dispatch: any) => ({
     createChannelList: () => dispatch(channelListModule.createChannelList()),
     addChannelToList: () => dispatch(channelListModule.addChannelToList()),
+    toggleAddAllChannelModal: () => dispatch(uiModule.toggleAddAllChannelModal()),
   })
 
   handleSuggestSubmit = (e: React.FormEvent) => {
@@ -54,7 +57,7 @@ class MyList extends React.Component<MyListProps> {
   }
 
   render() {
-    const { user, channelList } = this.props;
+    const { user, channelList, toggleAddAllChannelModal } = this.props;
 
     return (
       <>
@@ -78,9 +81,16 @@ class MyList extends React.Component<MyListProps> {
                     >
                       リストに追加
                     </AddButton>
+                    <AddAllButton
+                      variant="outlined"
+                      onClick={toggleAddAllChannelModal}
+                    >
+                      全チャンネルを追加
+                    </AddAllButton>
                   </form>
                   <MyListTable />
                   <RemoveFromListModal />
+                  <AddAllChannelModal />
                 </>
               : this.listCreateButton
         }
@@ -96,6 +106,13 @@ const CopyButton = styled(Button)({
 const AddButton = styled(Button)({
   display: 'inline-block',
   height: 40,
+});
+
+const AddAllButton = styled(Button)({
+  display: 'inline-block',
+  height: 40,
+  marginRight: 40,
+  float: 'right',
 });
 
 export default connect(

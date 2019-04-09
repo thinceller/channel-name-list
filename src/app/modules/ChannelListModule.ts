@@ -15,6 +15,7 @@ class ChannelListModule {
     handleSuggestingChange: 'HANDLE_SUGGESTING_CHANGE',
     addChannelToList: 'ADD_CHANNEL_TO_LIST',
     removeChannelFromList: 'REMOVE_CHANNEL_FROM_LIST',
+    addAllChannelsToList: 'ADD_ALL_CHANNELS_FROM_LIST',
     setRemovingChannel: 'SET_REMOVING_CHANNEL',
   };
 
@@ -134,6 +135,28 @@ class ChannelListModule {
     return promise;
   }
 
+  addAllChannelsToList = () => (dispatch: MyThunkDispatch, getState: () => State) => {
+    const promise = new Promise((resolve, reject) => {
+      const newChannelList = getState().channel.channels.map(channel => channel.id);
+      const { user } = getState().user;
+      if (!user) {
+        reject({ message: 'user is null' });
+      } else {
+        const userRef = db.collection('users').doc(user.uid);
+        userRef.update({ channelList: newChannelList })
+          .then(() => {
+            dispatch(FluxAction.createPlaneSuccess(
+              this.actionType.addAllChannelsToList,
+              { channelList: newChannelList },
+            ));
+            resolve();
+          })
+          .catch(err => reject(err));
+      }
+    });
+    return promise;
+  }
+
   setRemovingChannel = (channel: Channel) => (dispatch: MyThunkDispatch) => {
     const promise = new Promise((resolve) => {
       dispatch(FluxAction.createPlaneSuccess(
@@ -155,6 +178,7 @@ class ChannelListModule {
       case this.actionType.addChannelToList:
       case this.actionType.removeChannelFromList:
       case this.actionType.setRemovingChannel:
+      case this.actionType.addAllChannelsToList:
         return Object.assign({}, state, action.payload);
       default:
         return state;
