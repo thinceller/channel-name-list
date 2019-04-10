@@ -10,7 +10,7 @@ import {
   channelModule,
   channelListModule,
   uiModule,
-  createNotification
+  createNotification,
 } from '../../modules';
 import { Channel, Notification } from '../../models';
 import ChannelSuggest from './ChannelSuggest';
