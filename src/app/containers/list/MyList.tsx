@@ -1,10 +1,18 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Link from 'next/link';
 import { Button } from '@material-ui/core';
 import { styled } from '@material-ui/styles';
 
-import { State, channelListModule, uiModule } from '../../modules';
+import {
+  State,
+  channelModule,
+  channelListModule,
+  uiModule,
+  createNotification
+} from '../../modules';
+import { Channel, Notification } from '../../models';
 import ChannelSuggest from './ChannelSuggest';
 import MyListTable from './MyListTable';
 import RemoveFromListModal from './RemoveFromListModal';
@@ -12,23 +20,43 @@ import AddAllChannelModal from './AddAllChannelModal';
 
 interface MyListProps {
   user: State['user']['user'];
-  channelList: State['channelList'];
+  channelList: State['channelList']['channelList'];
+  channelListText: string;
+  getAllChannels: () => Promise<Channel[]>;
   createChannelList: () => Promise<void>;
   addChannelToList: () => Promise<void>;
   toggleAddAllChannelModal: () => Promise<void>;
+  updateChannelListText: (channelList: string[]) => Promise<string>;
 }
 
 class MyList extends React.Component<MyListProps> {
   static mapStateToProps = (state: State) => ({
     user: state.user.user,
-    channelList: state.channelList,
+    channelList: state.channelList.channelList,
+    channelListText: state.channelList.channelListText,
   })
 
   static mapDispatchToProps = (dispatch: any) => ({
+    getAllChannels: () => dispatch(channelModule.getAllChannels()),
     createChannelList: () => dispatch(channelListModule.createChannelList()),
     addChannelToList: () => dispatch(channelListModule.addChannelToList()),
     toggleAddAllChannelModal: () => dispatch(uiModule.toggleAddAllChannelModal()),
+    updateChannelListText: (channelList: string[]) => {
+      return dispatch(channelListModule.updateChannelListText(channelList));
+    },
   })
+
+  componentDidMount() {
+    this.props.getAllChannels()
+      .then(() => {
+        const list: string[] = this.props.channelList ? this.props.channelList : [];
+        this.props.updateChannelListText(list);
+      });
+  }
+
+  handleTextCopy = () => {
+    createNotification(Notification.createOnCopySucceeded('コピーしました'));
+  }
 
   handleSuggestSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,21 +85,23 @@ class MyList extends React.Component<MyListProps> {
   }
 
   render() {
-    const { user, channelList, toggleAddAllChannelModal } = this.props;
+    const { user, channelList, channelListText, toggleAddAllChannelModal } = this.props;
 
     return (
       <>
         {
           !user
             ? this.loginHelp
-            : (channelList && channelList.channelList)
+            : channelList
               ? <>
-                  <CopyButton
-                    variant="contained"
-                    color="primary"
-                  >
-                    リストをコピー
-                  </CopyButton>
+                  <CopyToClipboard text={channelListText} onCopy={this.handleTextCopy}>
+                    <CopyButton
+                      variant="contained"
+                      color="primary"
+                    >
+                      リストをコピー
+                    </CopyButton>
+                  </CopyToClipboard>
                   <form onSubmit={this.handleSuggestSubmit}>
                     <ChannelSuggest />
                     <AddButton

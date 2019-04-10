@@ -5,6 +5,7 @@ import { Channel } from '../models';
 
 export type ChannelListModuleState = {
   channelList: string[] | null,
+  channelListText: string,
   suggestingChannel: string,
   removingChannel: Channel,
 };
@@ -17,20 +18,23 @@ class ChannelListModule {
     removeChannelFromList: 'REMOVE_CHANNEL_FROM_LIST',
     addAllChannelsToList: 'ADD_ALL_CHANNELS_FROM_LIST',
     setRemovingChannel: 'SET_REMOVING_CHANNEL',
+    updateChannelListText: 'UPDATE_CHANNEL_LIST_TEXT',
   };
 
   state: ChannelListModuleState = {
     channelList: null,
+    channelListText: '',
     suggestingChannel: '',
     removingChannel: Channel.createEmpty(),
   };
 
-  setChannelList = (channelList: any) => (dispatch: MyThunkDispatch) => {
+  setChannelList = (channelList: string[]) => (dispatch: MyThunkDispatch) => {
     const promise = new Promise((resolve) => {
       dispatch(FluxAction.createPlaneSuccess(
         this.actionType.setChannelList,
         { channelList },
       ));
+      dispatch(this.updateChannelListText(channelList));
       resolve();
     });
     return promise;
@@ -95,6 +99,7 @@ class ChannelListModule {
                 this.actionType.addChannelToList,
                 { channelList },
               ));
+              dispatch(this.updateChannelListText(channelList ? channelList : []));
               dispatch(this.handleSuggestingChange(''));
               resolve();
             })
@@ -127,6 +132,7 @@ class ChannelListModule {
               this.actionType.removeChannelFromList,
               { channelList: newChannelList },
             ));
+            dispatch(this.updateChannelListText(newChannelList));
             resolve();
           })
           .catch(err => reject(err));
@@ -149,6 +155,7 @@ class ChannelListModule {
               this.actionType.addAllChannelsToList,
               { channelList: newChannelList },
             ));
+            dispatch(this.updateChannelListText(newChannelList));
             resolve();
           })
           .catch(err => reject(err));
@@ -168,6 +175,27 @@ class ChannelListModule {
     return promise;
   }
 
+  updateChannelListText = (channelList: string[]) => (
+    dispatch: MyThunkDispatch,
+    getState: () => State,
+  ) => {
+    const promise = new Promise((resolve, reject) => {
+      const { channels } = getState().channel;
+      if (!channelList) {
+        reject();
+      } else {
+        const myChannels = channels.filter(channel => channelList.includes(channel.id));
+        const channelListText = myChannels.map(channel => channel.name).join('\n');
+        dispatch(FluxAction.createPlaneSuccess(
+          this.actionType.updateChannelListText,
+          { channelListText },
+        ));
+        resolve(channelListText);
+      }
+    });
+    return promise;
+  }
+
   reducer = (
     state: ChannelListModuleState = this.state,
     action: FluxAction,
@@ -179,6 +207,7 @@ class ChannelListModule {
       case this.actionType.removeChannelFromList:
       case this.actionType.setRemovingChannel:
       case this.actionType.addAllChannelsToList:
+      case this.actionType.updateChannelListText:
         return Object.assign({}, state, action.payload);
       default:
         return state;

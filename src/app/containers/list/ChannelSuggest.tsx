@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as Autosuggest from 'react-autosuggest';
 
-import { State, channelModule, channelListModule } from '../../modules';
+import { State, channelListModule } from '../../modules';
 import { Channel } from '../../models';
 
 interface ChannelSuggestion {
@@ -16,7 +16,6 @@ interface ChannelSuggestProps {
   channels: Channel[];
   channelList: string[];
   suggestingChannel: string;
-  getAllChannels: () => Promise<Channel[]>;
   handleSuggestingChange: (liverName: string) => Promise<void>;
 }
 
@@ -32,7 +31,6 @@ class ChannelSuggest extends React.Component<ChannelSuggestProps, ChannelSuggest
   })
 
   static mapDispatchToProps = (dispatch: any) => ({
-    getAllChannels: () => dispatch(channelModule.getAllChannels()),
     handleSuggestingChange: (liverName: string) => {
       return dispatch(channelListModule.handleSuggestingChange(liverName));
     },
@@ -41,10 +39,6 @@ class ChannelSuggest extends React.Component<ChannelSuggestProps, ChannelSuggest
   state = {
     suggestions: [],
   };
-
-  componentDidMount() {
-    this.props.getAllChannels();
-  }
 
   componentWillUnmount() {
     this.props.handleSuggestingChange('');

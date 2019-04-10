@@ -8,6 +8,8 @@ export { default as channelListModule } from './ChannelListModule';
 export { default as FluxAction } from './FluxAction';
 export { default as uiModule } from './UIModule';
 export { default as userModule } from './UserModule';
+
+export { default as createNotification } from './NotificationModule';
 export type State = {
   channel: ChannelModuleState,
   channelList: ChannelListModuleState,

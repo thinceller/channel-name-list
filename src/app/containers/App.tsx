@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { NotificationContainer } from 'react-notifications';
 import Head from 'next/head';
 
 import Header from './Header';
@@ -31,11 +32,17 @@ class App extends React.Component<IAppProps> {
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
           />
+          <link
+            rel="stylesheet"
+            type="text/css"
+            href="../static/react-notifications.css"
+          />
           <link href="../static/theme.css" rel="stylesheet" />
         </Head>
         <Loading isLoading={isLoading} />
         <Header />
         {children}
+        <NotificationContainer />
       </main>
     );
   }
