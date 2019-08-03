@@ -1,17 +1,24 @@
 import { Action, Dispatch } from 'redux';
 
-import { auth } from '../firebase';
-import FluxAction from './FluxAction';
+import { auth, db } from '../firebase';
+import FluxAction, { MyThunkDispatch } from './FluxAction';
+import { channelListModule } from '../modules';
 
-interface UserModuleState {
-  user: firebase.User | null;
-}
+export type UserModuleState = {
+  auth: firebase.User | null,
+  user: {
+    uid: string,
+    displayName: string,
+    authority: string,
+  } | null,
+};
 
 class UserModule {
   // ===========================================================================
   //  action types
   // ===========================================================================
   actionType = {
+    fetchAuth: 'FETCH_AUTH',
     fetchUser: 'FETCH_USER',
     createUser: 'CREATE_USER',
     loginUser: 'LOGIN_USER',
@@ -22,21 +29,37 @@ class UserModule {
   //  initial state
   // ===========================================================================
   state: UserModuleState = {
+    auth: null,
     user: null,
   };
 
   // ===========================================================================
   //  action creators
   // ===========================================================================
-  fetchUser = () => (dispatch: Dispatch<Action>) => {
+  fetchAuth = () => (dispatch: MyThunkDispatch) => {
     const promise = new Promise((resolve) => {
-      auth.onAuthStateChanged(user => {
-        if (user) {
+      auth.onAuthStateChanged(auth => {
+        if (auth) {
           dispatch(FluxAction.createPlaneSuccess(
-            this.actionType.fetchUser,
-            { user },
+            this.actionType.fetchAuth,
+            { auth },
           ));
-          resolve(user);
+          const userRef = db.collection('users').doc(auth.uid);
+          userRef
+            .get()
+            .then(doc => {
+              if (doc.exists) {
+                const user = doc.data();
+                dispatch(FluxAction.createPlaneSuccess(
+                  this.actionType.fetchUser,
+                  { user },
+                ));
+                if (user && user.channelList) {
+                  dispatch(channelListModule.setChannelList(user.channelList));
+                }
+              }
+            });
+          resolve(auth);
         }
       });
     });
@@ -53,6 +76,9 @@ class UserModule {
             this.actionType.createUser,
             { user },
           ));
+          db.collection('users')
+            .doc(user.uid)
+            .set({ authority: 'user', uid: user.uid });
           resolve(user);
         })
         .catch(err => reject(err));
@@ -83,7 +109,7 @@ class UserModule {
         .then(() => {
           dispatch(FluxAction.createPlaneSuccess(
             this.actionType.logoutUser,
-            { user: null },
+            { auth: null, user: null },
           ));
           resolve();
         })
@@ -97,6 +123,7 @@ class UserModule {
   // ===========================================================================
   reducer = (state: UserModuleState = this.state, action: FluxAction): UserModuleState => {
     switch (action.type) {
+      case this.actionType.fetchAuth:
       case this.actionType.fetchUser:
       case this.actionType.createUser:
       case this.actionType.loginUser:

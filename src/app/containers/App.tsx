@@ -1,25 +1,28 @@
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { NotificationContainer } from 'react-notifications';
 import Head from 'next/head';
 
 import Header from './Header';
-import { userModule } from '../modules';
+import { userModule, State } from '../modules';
+import { Loading } from '../components';
 
 interface IAppProps {
-  user: firebase.UserInfo;
+  auth: firebase.User | null;
+  isLoading: boolean;
   children?: React.ReactNode;
-  fetchUser: () => (dispatch: any) => Promise<{}>;
+  fetchAuth: () => any;
 }
 
 class App extends React.Component<IAppProps> {
   componentDidMount() {
-    if (this.props.user) { return; }
-    this.props.fetchUser();
+    if (this.props.auth) { return; }
+    this.props.fetchAuth();
   }
 
   render() {
-    const { user, children } = this.props;
+    const { children, isLoading } = this.props;
 
     return (
       <main>
@@ -29,21 +32,30 @@ class App extends React.Component<IAppProps> {
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"
           />
+          <link
+            rel="stylesheet"
+            type="text/css"
+            href="../static/react-notifications.css"
+          />
+          <link href="../static/theme.css" rel="stylesheet" />
         </Head>
-        <Header user={user} />
+        <Loading isLoading={isLoading} />
+        <Header />
         {children}
+        <NotificationContainer />
       </main>
     );
   }
 }
 
-const mapStateToProps = (state: any) => ({
-  user: state.user.user,
+const mapStateToProps = (state: State) => ({
+  auth: state.user.auth,
+  isLoading: state.ui.isLoading,
 });
 
 const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
-    { fetchUser: userModule.fetchUser },
+    { fetchAuth: userModule.fetchAuth },
     dispatch,
   );
 };

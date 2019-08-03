@@ -6,11 +6,13 @@ import ReduxThunk from 'redux-thunk';
 import App, { Container } from 'next/app';
 import withRedux from 'next-redux-wrapper';
 
-import { channelModule, userModule } from '../modules';
+import { channelModule, channelListModule, userModule, uiModule } from '../modules';
 
 const reducers = combineReducers({
   user: userModule.reducer,
   channel: channelModule.reducer,
+  channelList: channelListModule.reducer,
+  ui: uiModule.reducer,
 });
 
 const initStore = (initialState = {}, _) => {
