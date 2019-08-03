@@ -12,7 +12,7 @@ interface IAppProps {
   auth: firebase.User | null;
   isLoading: boolean;
   children?: React.ReactNode;
-  fetchAuth: () => (dispatch: any) => Promise<{}>;
+  fetchAuth: () => any;
 }
 
 class App extends React.Component<IAppProps> {

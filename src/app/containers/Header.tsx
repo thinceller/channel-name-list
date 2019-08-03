@@ -11,7 +11,7 @@ interface IHeaderProps {
   auth: firebase.UserInfo;
   user: User;
   pathname?: any;
-  logoutUser: () => (dispatch: any) => Promise<{}>;
+  logoutUser: () => any;
 }
 
 class Header extends React.Component<IHeaderProps> {
