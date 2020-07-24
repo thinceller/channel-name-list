@@ -47,13 +47,10 @@ workflows:
 
   build_or_deploy:
     jobs:
-      - build:
-          filters:
-            branches:
-              only:
-                - develop
-                - /feature.*/
+      - build
       - deploy:
+          requires:
+            - build
           filters:
             branches:
               only:
